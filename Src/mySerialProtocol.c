@@ -27,6 +27,7 @@ void initMySerialProtocol(struct mySerialProtocolth *msp)
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	uint8_t eidx;
+	uint8_t i;
 	struct mySerialProtocolth *msp;
 
 	for (eidx=1;eidx<=no_mySerialProtocols;eidx++)
@@ -40,6 +41,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				break;
 
 				case ST_RESET:
+					mySerialProtocols[eidx]->currentInFrame = nullFrame;
 					protocol_st = ST_WF_STARTCHAR;
 					break;
 

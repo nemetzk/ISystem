@@ -66,6 +66,9 @@ typedef struct mySerialProtocolth
 }mySerialProtocolt;
 
 
+mySerialProtocolt nullFrame = {
+
+};
 #define MAX_NO_MYSERIALPROTOCOLS 2
 uint8_t no_mySerialProtocols;
 mySerialProtocolt *mySerialProtocols[MAX_NO_MYSERIALPROTOCOLS+1];
