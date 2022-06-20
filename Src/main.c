@@ -21,7 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "inits.h"
+#include "dataStorage.h"
+#include "mySerialProtocol.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,7 +48,9 @@ UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
+mySerialProtocolt MSP2;
 
+struct dataStorageth settingsData;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -63,7 +66,24 @@ static void MX_USART1_UART_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void main_init(UART_HandleTypeDef *myuart)
+{
+	  settingsData.Flashmemory.address = 0x0803f800;
 
+
+	   //datastorageInit(&settingsData); //ezt inkább próbánál az első adatbetöltésnél kell használni egyszer
+	   //datastorageSave(&settingsData);
+	   datastorageLoad(&settingsData);
+
+	   /* Segítség az STM32F4 vezérlő flash memória modul kidolgozásához
+	    * https://controllerstech.com/flash-programming-in-stm32/
+	    *
+	    *
+	    */
+
+	   //MSP1.sbusUart = &huart1;
+	   MSP2.func.Uart = myuart;
+}
 /* USER CODE END 0 */
 
 /**
@@ -99,7 +119,8 @@ int main(void)
   MX_TIM6_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  main_init();
+  main_init(&huart2);
+  TimerekSetup(&htim6);
   /* USER CODE END 2 */
 
   /* Infinite loop */

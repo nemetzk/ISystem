@@ -35,7 +35,7 @@ typedef struct mspFuncth
 	uint16_t elapsedTime;
 	uint8_t no_char;
 	struct UART_HandleTypeDef *Uart;
-	myTimerType sbusTimer;
+	myTimerType serialTimeOutTimer;
 }mspFunct;
 
 typedef struct currentInFrameth
@@ -66,12 +66,6 @@ typedef struct mySerialProtocolth
 }mySerialProtocolt;
 
 
-mySerialProtocolt nullFrame = {
-
-};
-#define MAX_NO_MYSERIALPROTOCOLS 2
-uint8_t no_mySerialProtocols;
-mySerialProtocolt *mySerialProtocols[MAX_NO_MYSERIALPROTOCOLS+1];
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
 

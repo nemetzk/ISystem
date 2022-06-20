@@ -2,8 +2,14 @@
 #include "timerFunctions.h"
 #include "stm32l4xx_hal.h"
 
-TIM_HandleTypeDef htim6;
+//TIM_HandleTypeDef htim6;
+unsigned int tidx ;
+
 static unsigned char notimers = 0;
+
+#define TIMEREK_SZAMA 10
+myTimerType *timer[TIMEREK_SZAMA+1];
+
 
 void TimerProgramCyclic(void)
 {
@@ -45,11 +51,11 @@ unsigned char timerElapsed(myTimerType *Timer_ptr) {
 }
 */
 
-void TimerekSetup(void){
+void TimerekSetup(TIM_HandleTypeDef *htim){
 	unsigned char timer_setup_idx;
 	//timer = (myTimerType*)malloc(TIMEREK_SZAMA*sizeof(myTimerType));
 	//for (timer_setup_idx=0;timer_setup_idx<TIMEREK_SZAMA;timer_setup_idx++) setTimer ( timer_setup_idx , 0 ) ;
-	HAL_TIM_Base_Start_IT(&htim6);
+	HAL_TIM_Base_Start_IT(htim);
 }
 /*
 void TIM6_IRQHandler(void) { // Pass the control to HAL, which processes the IRQ
