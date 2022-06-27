@@ -13,6 +13,14 @@ currentInFramet nullFrame = {};
 uint8_t no_mySerialProtocols;
 mySerialProtocolt *mySerialProtocols[MAX_NO_MYSERIALPROTOCOLS+1];
 
+
+void resetComm(struct mySerialProtocolth *msp)
+{
+	msp->func.no_char = 0;
+	msp->func.protocol_st= ST_WF_STARTCHAR;
+
+}
+
 void initMySerialProtocol(struct mySerialProtocolth *msp)
 {
 	uint8_t i;
@@ -26,11 +34,15 @@ void initMySerialProtocol(struct mySerialProtocolth *msp)
 	 msp->protocol.writeChar = 'w';
 
 	 //******
+	 msp->func.serialTimeOutTimer.Callback = resetComm;
+	 msp->func.serialTimeOutTimer.ownerPtr = msp;
 	initTimer(&msp->func.serialTimeOutTimer);
-	msp->func.serialTimeOutTimer.set_value=500;
+	msp->func.serialTimeOutTimer.set_value=100;
 
 	HAL_UART_Receive_IT(msp->func.Uart, &(msp->func.oneCharBuffer), 1);
 }
+
+
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -51,11 +63,12 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				break;
 
 				case ST_RESET:
-					mySerialProtocols[eidx]->currentInFrame = nullFrame;
+
 					mySerialProtocols[eidx]->func.protocol_st= ST_WF_STARTCHAR;
 					break;
 
 				case ST_WF_STARTCHAR:
+					mySerialProtocols[eidx]->currentInFrame = nullFrame;
 					if (mySerialProtocols[eidx]->func.oneCharBuffer == mySerialProtocols[eidx]->protocol.startChar)
 					{
 						mySerialProtocols[eidx]->func.no_char++;
@@ -94,7 +107,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 
 				case ST_WF_ENDCHAR:
 					if (mySerialProtocols[eidx]->func.oneCharBuffer == mySerialProtocols[eidx]->protocol.endChar)
-					mySerialProtocols[eidx]->currentInFrame.Value =mySerialProtocols[eidx]->func.oneCharBuffer;
+					//mySerialProtocols[eidx]->currentInFrame.Value =mySerialProtocols[eidx]->func.oneCharBuffer;
 					mySerialProtocols[eidx]->func.no_char=0;
 					mySerialProtocols[eidx]->func.protocol_st=  ST_WF_STARTCHAR;
 					break;

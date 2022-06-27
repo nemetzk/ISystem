@@ -121,6 +121,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   main_init(&huart2);
   TimerekSetup(&htim6);
+  initMySerialProtocol(&MSP2);
+  main_cycle_setup();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -339,35 +341,13 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, Y10_Pin|Y11_Pin|Y12_Pin|Y13_Pin
-                          |Y14_Pin|Y15_Pin|Y00_Pin|Y01_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, D3_Pin|D6_Pin|LD3_Pin|D5_Pin
+                          |D4_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LD3_Pin|Y03_Pin|Y02_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pins : Y10_Pin Y11_Pin Y12_Pin Y13_Pin
-                           Y14_Pin Y15_Pin Y00_Pin Y01_Pin */
-  GPIO_InitStruct.Pin = Y10_Pin|Y11_Pin|Y12_Pin|Y13_Pin
-                          |Y14_Pin|Y15_Pin|Y00_Pin|Y01_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : X01_Pin X03_Pin X02_Pin */
-  GPIO_InitStruct.Pin = X01_Pin|X03_Pin|X02_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : X00_Pin */
-  GPIO_InitStruct.Pin = X00_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(X00_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : LD3_Pin Y03_Pin Y02_Pin */
-  GPIO_InitStruct.Pin = LD3_Pin|Y03_Pin|Y02_Pin;
+  /*Configure GPIO pins : D3_Pin D6_Pin LD3_Pin D5_Pin
+                           D4_Pin */
+  GPIO_InitStruct.Pin = D3_Pin|D6_Pin|LD3_Pin|D5_Pin
+                          |D4_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
