@@ -17,9 +17,9 @@ myTimerType  test_timer;
 
 mySerialProtocolt *mySerialProtocols[MAX_NO_MYSERIALPROTOCOLS+1];
 
-char msg[20];
 
-void myPrintf(struct UART_HandleTypeDef *huart,char myMsg[20])
+
+void myPrintf(struct UART_HandleTypeDef *huart,char myMsg[30])
 {
 	HAL_UART_Transmit(huart, (uint8_t*)myMsg, strlen(myMsg), HAL_MAX_DELAY);
 }
@@ -32,10 +32,9 @@ void timerCallback(void)
 
 void resetComm(struct mySerialProtocolth *msp)
 {
-	//myPrintf(msp->func.Uart,"Unknown command!/n/r");
-	msp->func.no_char = 0;
+	myPrintf(msp->func.Uart,"Unknown command!\n");
 	msp->func.protocol_st= ST_WF_STARTCHAR;
-	//HAL_UART_Receive_IT(msp->func.Uart, &(msp->func.oneCharBuffer), 1);
+	HAL_UART_Receive_IT(msp->func.Uart, &(msp->func.oneCharBuffer), 1);
 }
 
 void initMySerialProtocol(struct mySerialProtocolth *msp)
@@ -57,11 +56,11 @@ void initMySerialProtocol(struct mySerialProtocolth *msp)
 	 //******
 	msp->func.serialTimeOutTimer.Callback = resetComm;
 	msp->func.serialTimeOutTimer.ownerPtr = msp;
-	msp->func.serialTimeOutTimer.set_value=150;
 	initTimer(&msp->func.serialTimeOutTimer);
-
-	msp->func.no_char = 0;
+	msp->func.serialTimeOutTimer.Enabled = 0;
+	msp->func.serialTimeOutTimer.set_value=100;
 	msp->func.protocol_st= ST_WF_STARTCHAR;
+
 
 	test_timer.set_value=80;
 	test_timer.Callback=timerCallback;
@@ -89,7 +88,8 @@ void yCommand (struct mySerialProtocolth *msp)
 
 void YCommand (struct mySerialProtocolth *msp)
 {
-	sprintf(msg, "%c command    address:%c  value:%c\r\n",msp->currentInFrame.Command ,msp->currentInFrame.Address, msp->currentInFrame.Value);
+	char msg[50];
+	sprintf(msg, "command:%c   address:%c  value:%c \r\n",msp->currentInFrame.Command ,msp->currentInFrame.Address, msp->currentInFrame.Value);
 	myPrintf(msp->func.Uart,msg);
 	switch (msp->currentInFrame.Address)
 	{
@@ -97,13 +97,14 @@ void YCommand (struct mySerialProtocolth *msp)
 		if (msp->currentInFrame.Value == '1')
 		{
 			HAL_GPIO_WritePin(D3_GPIO_Port, D3_Pin, GPIO_PIN_SET);
-			myPrintf(msp->func.Uart,"D3_ON\r\n");
+			myPrintf(msp->func.Uart,"D3_ON\n");
+
 		}
 
 		if (msp->currentInFrame.Value == '0')
 		{
 			HAL_GPIO_WritePin(D3_GPIO_Port, D3_Pin, GPIO_PIN_RESET);
-			myPrintf(msp->func.Uart,"D3_OFF\r\n");
+			myPrintf(msp->func.Uart,"D3_OFF\n");
 		}
 
 	break;
@@ -160,8 +161,7 @@ void YCommand (struct mySerialProtocolth *msp)
 
 void parseFrame (struct mySerialProtocolth *msp)
 {
- if (MFRAME.Address == MYADDRESS)
- {
+
  switch (MFRAME.Command)
  {
  case 'r':
@@ -180,57 +180,45 @@ void parseFrame (struct mySerialProtocolth *msp)
 	 YCommand(msp);
  break;
 
-
-
  }//SWITCH
- }//IF
+
 }//VOID
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	uint8_t eidx;
 	uint8_t i;
+	char msg[20];
+
 	struct mySerialProtocolth *msp;
 	for (eidx=1;eidx<=no_mySerialProtocols;eidx++)
 		if ( huart == mySerialProtocols[eidx]->func.Uart)
 		  {
-			mySerialProtocols[eidx]->func.RxBuffer[mySerialProtocols[eidx]->func.no_char] = mySerialProtocols[eidx]->func.protocol_st;
 			switch (mySerialProtocols[eidx]->func.protocol_st)
 			{
 				case ST_WF_STARTCHAR:
 					mySerialProtocols[eidx]->currentInFrame = nullFrame;
 					if (mySerialProtocols[eidx]->func.oneCharBuffer == mySerialProtocols[eidx]->protocol.startChar)
 					{
-						mySerialProtocols[eidx]->func.no_char++;
-						mySerialProtocols[eidx]->func.protocol_st= ST_WF_STATION;
+						mySerialProtocols[eidx]->func.protocol_st= ST_WF_COMMAND;
 					}
 					setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
 					break;
 
-				case ST_WF_STATION:
-						mySerialProtocols[eidx]->currentInFrame.Station =mySerialProtocols[eidx]->func.oneCharBuffer;
-						mySerialProtocols[eidx]->func.no_char++;
-						setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
-						mySerialProtocols[eidx]->func.protocol_st = ST_WF_COMMAND;
-					break;
-
 				case ST_WF_COMMAND:
 					mySerialProtocols[eidx]->currentInFrame.Command =mySerialProtocols[eidx]->func.oneCharBuffer;
-					mySerialProtocols[eidx]->func.no_char++;
 					setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
 					mySerialProtocols[eidx]->func.protocol_st= ST_WF_ADDRESS;
 					break;
 
 				case ST_WF_ADDRESS:
 					mySerialProtocols[eidx]->currentInFrame.Address =mySerialProtocols[eidx]->func.oneCharBuffer;
-					mySerialProtocols[eidx]->func.no_char++;
 					setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
 					mySerialProtocols[eidx]->func.protocol_st=  ST_WF_VALUE;
 					break;
 
 				case ST_WF_VALUE:
 					mySerialProtocols[eidx]->currentInFrame.Value =mySerialProtocols[eidx]->func.oneCharBuffer;
-					mySerialProtocols[eidx]->func.no_char++;
 					setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
 					mySerialProtocols[eidx]->func.protocol_st=  ST_WF_ENDCHAR;
 					break;
@@ -240,14 +228,13 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 					{
 						myPrintf(mySerialProtocols[eidx]->func.Uart,"COMMAND ACK!\r\n");
 						parseFrame(mySerialProtocols[eidx]);
-						mySerialProtocols[eidx]->func.no_char=0;
 						mySerialProtocols[eidx]->func.protocol_st=  ST_WF_STARTCHAR;
 					}
 					break;
-			}
+			}//switch
 			sprintf(msg,"%c",mySerialProtocols[eidx]->func.oneCharBuffer);
-			myPrintf(huart,msg);
+			myPrintf(mySerialProtocols[eidx]->func.Uart,msg);
 			HAL_UART_Receive_IT(huart, &(mySerialProtocols[eidx]->func.oneCharBuffer), 1);
 
-		  }
+		  }//if
 }

@@ -18,11 +18,10 @@
 #define NO_ENDCHAR		5
 
 #define ST_WF_STARTCHAR 	1
-#define ST_WF_STATION	 	2
-#define ST_WF_COMMAND 		3
-#define ST_WF_ADDRESS 		4
-#define ST_WF_VALUE			5
-#define ST_WF_ENDCHAR		6
+#define ST_WF_COMMAND 		2
+#define ST_WF_ADDRESS 		3
+#define ST_WF_VALUE			4
+#define ST_WF_ENDCHAR		5
 
 
 typedef struct mspFuncth
@@ -31,7 +30,6 @@ typedef struct mspFuncth
 	uint8_t RxBuffer[25];
 	uint8_t oneCharBuffer;
 	uint16_t elapsedTime;
-	uint8_t no_char;
 	struct UART_HandleTypeDef *Uart;
 	myTimerType serialTimeOutTimer;
 }mspFunct;
