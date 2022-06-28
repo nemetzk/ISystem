@@ -88,7 +88,7 @@ void yCommand (struct mySerialProtocolth *msp)
 
 void YCommand (struct mySerialProtocolth *msp)
 {
-	char msg[50];
+	char msg[50]; //Ebbe a tömbbe többet akartunk tölteni mint amennyi fér így mindig kifagytunk !!!
 	sprintf(msg, "command:%c   address:%c  value:%c \r\n",msp->currentInFrame.Command ,msp->currentInFrame.Address, msp->currentInFrame.Value);
 	myPrintf(msp->func.Uart,msg);
 	switch (msp->currentInFrame.Address)
