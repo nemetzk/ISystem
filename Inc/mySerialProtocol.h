@@ -17,14 +17,12 @@
 #define NO_VALUE		4
 #define NO_ENDCHAR		5
 
-#define ST_INIT 			0
-#define ST_RESET			1
-#define ST_WF_STARTCHAR 	2
-#define ST_WF_STATION	 	3
-#define ST_WF_COMMAND 		4
-#define ST_WF_ADDRESS 		5
-#define ST_WF_VALUE			6
-#define ST_WF_ENDCHAR		7
+#define ST_WF_STARTCHAR 	1
+#define ST_WF_STATION	 	2
+#define ST_WF_COMMAND 		3
+#define ST_WF_ADDRESS 		4
+#define ST_WF_VALUE			5
+#define ST_WF_ENDCHAR		6
 
 
 typedef struct mspFuncth
