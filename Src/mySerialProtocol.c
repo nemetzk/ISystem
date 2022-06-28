@@ -191,9 +191,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	uint8_t eidx;
 	uint8_t i;
 	struct mySerialProtocolth *msp;
-
-
-
 	for (eidx=1;eidx<=no_mySerialProtocols;eidx++)
 		if ( huart == mySerialProtocols[eidx]->func.Uart)
 		  {
