@@ -21,7 +21,6 @@ char msg[20];
 
 void myPrintf(struct UART_HandleTypeDef *huart,char myMsg[20])
 {
-	//sprintf(myMsg, "Command received!\r\n");
 	HAL_UART_Transmit(huart, (uint8_t*)myMsg, strlen(myMsg), HAL_MAX_DELAY);
 }
 
@@ -33,10 +32,10 @@ void timerCallback(void)
 
 void resetComm(struct mySerialProtocolth *msp)
 {
-	myPrintf(msp->func.Uart,"Unknown command!/n/r");
+	//myPrintf(msp->func.Uart,"Unknown command!/n/r");
 	msp->func.no_char = 0;
 	msp->func.protocol_st= ST_WF_STARTCHAR;
-	HAL_UART_Receive_IT(msp->func.Uart, &(msp->func.oneCharBuffer), 1);
+	//HAL_UART_Receive_IT(msp->func.Uart, &(msp->func.oneCharBuffer), 1);
 }
 
 void initMySerialProtocol(struct mySerialProtocolth *msp)
@@ -58,8 +57,9 @@ void initMySerialProtocol(struct mySerialProtocolth *msp)
 	 //******
 	msp->func.serialTimeOutTimer.Callback = resetComm;
 	msp->func.serialTimeOutTimer.ownerPtr = msp;
+	msp->func.serialTimeOutTimer.set_value=150;
 	initTimer(&msp->func.serialTimeOutTimer);
-	msp->func.serialTimeOutTimer.set_value=90;
+
 	msp->func.no_char = 0;
 	msp->func.protocol_st= ST_WF_STARTCHAR;
 
