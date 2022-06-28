@@ -41,17 +41,21 @@ typedef struct mspFuncth
 typedef struct currentInFrameth
 {
 	uint8_t Station;
-	uint8_t Command;
+	char Command;
 	uint8_t Address;
 	uint8_t Value;
 }currentInFramet;
 
 typedef struct protocolth
 {
-	uint8_t startChar;
-	uint8_t endChar;
-	uint8_t readChar;
-	uint8_t writeChar;
+	char startChar;
+	char endChar;
+	char readChar;
+	char writeChar;
+	char readInput;
+	char writeOutput;
+	char readOutput;
+
 
 
 }protocolt;

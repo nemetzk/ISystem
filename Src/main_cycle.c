@@ -17,9 +17,11 @@ void timerCallback(void)
 
 void main_cycle_setup (void)
 {
+	/*
 	test_timer.set_value=30;
 	test_timer.Callback=timerCallback;
 	initTimer(&test_timer);
 	test_timer.Enabled=2;
 	setTimer(&test_timer);
+	*/
 }

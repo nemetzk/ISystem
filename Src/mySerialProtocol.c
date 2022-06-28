@@ -6,11 +6,15 @@
  */
 #include "main.h"
 #include "mySerialProtocol.h"
+#include "parameters.h"
 
 currentInFramet nullFrame = {};
 
+#define MFRAME msp->currentInFrame
 #define MAX_NO_MYSERIALPROTOCOLS 2
+
 uint8_t no_mySerialProtocols;
+
 mySerialProtocolt *mySerialProtocols[MAX_NO_MYSERIALPROTOCOLS+1];
 
 
@@ -30,9 +34,13 @@ void initMySerialProtocol(struct mySerialProtocolth *msp)
 
 	 msp->protocol.startChar = '&';
 	 msp->protocol.endChar = '!';
+	 /*
 	 msp->protocol.readChar = 'r';
 	 msp->protocol.writeChar = 'w';
-
+	 msp->protocol.readInput = 'x';
+	 msp->protocol.readOutput = 'y';
+	 msp->protocol.writeOutput = 'Y';
+*/
 	 //******
 	 msp->func.serialTimeOutTimer.Callback = resetComm;
 	 msp->func.serialTimeOutTimer.ownerPtr = msp;
@@ -43,6 +51,110 @@ void initMySerialProtocol(struct mySerialProtocolth *msp)
 }
 
 
+void rCommand (struct mySerialProtocolth *msp)
+{
+}
+
+void wCommand (struct mySerialProtocolth *msp)
+{
+}
+
+void xCommand (struct mySerialProtocolth *msp)
+{
+}
+
+void yCommand (struct mySerialProtocolth *msp)
+{
+}
+
+void YCommand (struct mySerialProtocolth *msp)
+{
+	switch (msp->currentInFrame.Address)
+	{
+	case '1':
+		if (msp->currentInFrame.Value == 1)
+		{
+			HAL_GPIO_WritePin(D3_GPIO_Port, D3_Pin, GPIO_PIN_SET);
+		}
+
+		if (msp->currentInFrame.Value == 0)
+				{
+					HAL_GPIO_WritePin(D3_GPIO_Port, D3_Pin, GPIO_PIN_SET);
+				}
+
+	break;
+
+
+	case '2':
+		if (msp->currentInFrame.Value == 1)
+		{
+			HAL_GPIO_WritePin(D4_GPIO_Port, D4_Pin, GPIO_PIN_SET);
+		}
+
+		if (msp->currentInFrame.Value == 0)
+		{
+			HAL_GPIO_WritePin(D4_GPIO_Port, D4_Pin, GPIO_PIN_SET);
+		}
+
+	break;
+
+	case '3':
+		if (msp->currentInFrame.Value == 1)
+		{
+			HAL_GPIO_WritePin(D5_GPIO_Port, D5_Pin, GPIO_PIN_SET);
+		}
+
+		if (msp->currentInFrame.Value == 0)
+		{
+			HAL_GPIO_WritePin(D5_GPIO_Port, D5_Pin, GPIO_PIN_SET);
+		}
+	break;
+
+	case '4':
+		if (msp->currentInFrame.Value == 1)
+		{
+			HAL_GPIO_WritePin(D6_GPIO_Port, D6_Pin, GPIO_PIN_SET);
+		}
+
+		if (msp->currentInFrame.Value == 0)
+		{
+			HAL_GPIO_WritePin(D6_GPIO_Port, D6_Pin, GPIO_PIN_SET);
+		}
+	break;
+
+	case '5':
+	break;
+
+	}
+}
+
+void parseFrame (struct mySerialProtocolth *msp)
+{
+ if (MFRAME.Address == MYADDRESS)
+ {
+ switch (MFRAME.Command)
+ {
+ case 'r':
+	 rCommand(msp);
+ break;
+ case 'w':
+	 wCommand(msp);
+ break;
+ case 'x':
+	 xCommand(msp);
+ break;
+ case 'y':
+	 yCommand(msp);
+ break;
+ case 'Y':
+	 YCommand(msp);
+ break;
+
+
+
+ }//SWITCH
+ }//IF
+}//VOID
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
@@ -55,6 +167,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	for (eidx=1;eidx<=no_mySerialProtocols;eidx++)
 		if ( huart == mySerialProtocols[eidx]->func.Uart)
 		  {
+			mySerialProtocols[eidx]->func.RxBuffer[mySerialProtocols[eidx]->func.no_char] = mySerialProtocols[eidx]->func.protocol_st;
 			switch (mySerialProtocols[eidx]->func.protocol_st)
 			{
 				case ST_INIT:
@@ -108,10 +221,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				case ST_WF_ENDCHAR:
 					if (mySerialProtocols[eidx]->func.oneCharBuffer == mySerialProtocols[eidx]->protocol.endChar)
 					//mySerialProtocols[eidx]->currentInFrame.Value =mySerialProtocols[eidx]->func.oneCharBuffer;
-					mySerialProtocols[eidx]->func.no_char=0;
-					mySerialProtocols[eidx]->func.protocol_st=  ST_WF_STARTCHAR;
+					{
+						HAL_UART_Transmit(mySerialProtocols[eidx]->func.Uart, mySerialProtocols[eidx]->func.RxBuffer, 10, 1000);
+						parseFrame(mySerialProtocols[eidx]);
+						mySerialProtocols[eidx]->func.no_char=0;
+						mySerialProtocols[eidx]->func.protocol_st=  ST_WF_STARTCHAR;
+					}
 					break;
 			}
+
 			HAL_UART_Receive_IT(huart, &(mySerialProtocols[eidx]->func.oneCharBuffer), 1);
 			/**
 			 *   Feladatok:
