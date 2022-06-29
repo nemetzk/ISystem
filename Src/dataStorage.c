@@ -8,7 +8,11 @@
 
 #include "dataStorage.h"
 
-
+/**
+ *
+ * Ezt maximum "Load factory defaults" funkcióként lehet használni
+ *
+**/
 datastorageInit(struct dataStorageth *myDatastorage)
 {
 
@@ -19,6 +23,10 @@ datastorageInit(struct dataStorageth *myDatastorage)
 	  myDatastorage->Flashmemory.Tx_Data[3] = 3;
 	  myDatastorage->Flashmemory.Tx_Data[4] = 4;
 	  myDatastorage->Flashmemory.Tx_Data[5] = 5;
+	  myDatastorage->Flashmemory.Tx_Data[6] = 6;
+	  myDatastorage->Flashmemory.Tx_Data[7] = 7;
+	  myDatastorage->Flashmemory.Tx_Data[8] = 8;
+	  myDatastorage->Flashmemory.Tx_Data[9] = 9;
 	  myDatastorage->Flashmemory.data = myDatastorage->Flashmemory.Tx_Data;
 }
 

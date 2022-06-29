@@ -9,6 +9,7 @@
 #define INC_MYSERIALPROTOCOL_H_
 
 #include "timerFunctions.h"
+#include "dataStorage.h"
 
 #define NO_STARTCHAR 	0
 #define NO_STATION	 	1
@@ -19,9 +20,13 @@
 
 #define ST_WF_STARTCHAR 	1
 #define ST_WF_COMMAND 		2
-#define ST_WF_ADDRESS 		3
-#define ST_WF_VALUE			4
-#define ST_WF_ENDCHAR		5
+#define ST_WF_ADDRESS_1		3
+#define ST_WF_ADDRESS_2		4
+#define ST_WF_ADDRESS_3		5
+#define ST_WF_VALUE_1		6
+#define ST_WF_VALUE_2		7
+#define ST_WF_VALUE_3		8
+#define ST_WF_ENDCHAR		9
 
 
 typedef struct mspFuncth
@@ -31,6 +36,7 @@ typedef struct mspFuncth
 	uint8_t oneCharBuffer;
 	uint16_t elapsedTime;
 	struct UART_HandleTypeDef *Uart;
+	struct dataStorageth *dataStorage;
 	myTimerType serialTimeOutTimer;
 }mspFunct;
 
@@ -38,8 +44,8 @@ typedef struct currentInFrameth
 {
 	uint8_t Station;
 	char Command;
-	uint8_t Address;
-	uint8_t Value;
+	uint8_t Address[3];
+	uint8_t Value[3];
 }currentInFramet;
 
 typedef struct protocolth
