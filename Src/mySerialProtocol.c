@@ -153,8 +153,6 @@ void YCommand (struct mySerialProtocolth *msp)
 		}
 	break;
 
-	case '5':
-	break;
 
 	}
 }
