@@ -37,6 +37,9 @@ typedef struct mspFuncth
 	uint16_t elapsedTime;
 	struct UART_HandleTypeDef *Uart;
 	struct dataStorageth *dataStorage;
+	struct RTC_HandleTypeDef *hrtc;
+	RTC_TimeTypeDef sTime;
+	RTC_DateTypeDef sDate;
 	myTimerType serialTimeOutTimer;
 }mspFunct;
 
@@ -44,8 +47,8 @@ typedef struct currentInFrameth
 {
 	uint8_t Station;
 	char Command;
-	uint8_t Address[3];
-	uint8_t Value[3];
+	char Address[3];
+	char Value[3];
 }currentInFramet;
 
 typedef struct protocolth

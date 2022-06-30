@@ -25,7 +25,7 @@ int binary_converter(char binary[], int length)
 	int index = length - 1;
 	while (index >= 0)
 	{
-		decimal = decimal + (binary[index] - 48) * pow(2, position);
+		decimal = decimal + (binary[index] - 48) * pow(10, position);
 		index--;
 		position++;
 	}
@@ -83,55 +83,101 @@ void initMySerialProtocol(struct mySerialProtocolth *msp)
 	HAL_UART_Receive_IT(msp->func.Uart, &(msp->func.oneCharBuffer), 1);
 }
 
+void tCommand (struct mySerialProtocolth *msp)
+{
+	char msg[50]; //Ebbe a tömbbe többet akartunk tölteni mint amennyi fér így mindig kifagytunk !!!
+	HAL_RTC_GetTime(msp->func.hrtc,  &msp->func.sTime, RTC_FORMAT_BCD);
+	HAL_RTC_GetDate(msp->func.hrtc,  &msp->func.sDate, RTC_FORMAT_BCD);
+	sprintf (msg,"current time: %i:%i:%i\r\n", msp->func.sTime.Hours, msp->func.sTime.Minutes,msp->func.sTime.Seconds);
+    myPrintf(msp->func.Uart,msg);
+}
+
+void TCommand (struct mySerialProtocolth *msp)
+{
+	char msg[50]; //Ebbe a tömbbe többet akartunk tölteni mint amennyi fér így mindig kifagytunk !!!
+	int address = 0;
+	int value = 0;
+	HAL_RTC_GetTime(msp->func.hrtc,  &msp->func.sTime, RTC_FORMAT_BCD);
+	HAL_RTC_GetDate(msp->func.hrtc,  &msp->func.sDate, RTC_FORMAT_BCD);
+	myPrintf(msp->func.Uart,msg);
+	address = binary_converter(msp->currentInFrame.Address,3);
+	value = binary_converter(msp->currentInFrame.Value,3);
+	sprintf(msg, "command:%c   address:%c%c%c  value:%c%c%c \n", msp->currentInFrame.Command , msp->currentInFrame.Address[0], msp->currentInFrame.Address[1], msp->currentInFrame.Address[2], msp->currentInFrame.Value[0], msp->currentInFrame.Value[1], msp->currentInFrame.Value[2]);
+	myPrintf(msp->func.Uart,msg);
+	sprintf(msg, "command:%c   address:%i  value:%i \r\n",msp->currentInFrame.Command ,address, value);
+	myPrintf(msp->func.Uart,msg);
+	switch (address)
+	{
+	case 1: //hour
+		  msp->func.sTime.Hours = value;
+		  if (HAL_RTC_SetTime(msp->func.hrtc, &(msp->func.sTime), RTC_FORMAT_BCD) != HAL_OK)
+		  {
+		    Error_Handler();
+		  }
+		  sprintf (msg,"current time: %i:%i:%i\r\n", msp->func.sTime.Hours, msp->func.sTime.Minutes,msp->func.sTime.Seconds);
+		  myPrintf(msp->func.Uart,msg);
+	break;
+	case 2: //minute
+		  msp->func.sTime.Minutes = value;
+		  if (HAL_RTC_SetTime(msp->func.hrtc, &(msp->func.sTime), RTC_FORMAT_BCD) != HAL_OK)
+		  {
+		    Error_Handler();
+		  }
+		  sprintf (msg,"current time: %i:%i:%i\r\n", msp->func.sTime.Hours, msp->func.sTime.Minutes,msp->func.sTime.Seconds);
+		  		  myPrintf(msp->func.Uart,msg);
+
+	break;
+	}//switch
+}
 
 void rCommand (struct mySerialProtocolth *msp)
 {
 	char msg[50]; //Ebbe a tömbbe többet akartunk tölteni mint amennyi fér így mindig kifagytunk !!!
-	sprintf(msg, "command:%c   address:%c  value:%c \r\n",msp->currentInFrame.Command ,msp->currentInFrame.Address, msp->currentInFrame.Value);
 	int address = 0;
-
+	int value = 0;
 	myPrintf(msp->func.Uart,msg);
-	address = binary_converter(msp->currentInFrame.Value,3);
-
-	switch (address)
+	address = binary_converter(msp->currentInFrame.Address,3);
+	value = binary_converter(msp->currentInFrame.Value,3);
+	sprintf(msg, "command:%c   address:%c%c%c  value:%c%c%c \n", msp->currentInFrame.Command , msp->currentInFrame.Address[0], msp->currentInFrame.Address[1], msp->currentInFrame.Address[2], msp->currentInFrame.Value[0], msp->currentInFrame.Value[1], msp->currentInFrame.Value[2]);
+	sprintf(msg, "command:%c   address:%i  value:%i \r\n",msp->currentInFrame.Command ,address, value);
+	if (address>0 && address<255)
 	{
-	case '1':
-		msp->func.dataStorage->memoryArea[msp->currentInFrame.Address]  =
-				msp->currentInFrame.Value;
-		sprintf (msg,"dataStorage[%c]", msp->func.dataStorage->memoryArea[msp->currentInFrame.Address]
-		myPrintf(msp->func.Uart,"dataStorage saved!\n");
-	break;
-
-	}//switch
+		sprintf (msg,"dataStorage[%i]= %i\r\n", address, msp->func.dataStorage->memoryArea[address]);
+		myPrintf(msp->func.Uart,msg);
+	}//if
 }
 
 void wCommand (struct mySerialProtocolth *msp)
 {
 	char msg[50]; //Ebbe a tömbbe többet akartunk tölteni mint amennyi fér így mindig kifagytunk !!!
 	int address = 0;
-	sprintf(msg, "command:%c   address:%c  value:%c \r\n",msp->currentInFrame.Command ,msp->currentInFrame.Address, msp->currentInFrame.Value);
+	int value = 0;
+	address = binary_converter(msp->currentInFrame.Address,3);
+	value = binary_converter(msp->currentInFrame.Value,3);
+	sprintf(msg, "command:%c   address:%c%c%c  value:%c%c%c \r\n", msp->currentInFrame.Command , msp->currentInFrame.Address[0], msp->currentInFrame.Address[1], msp->currentInFrame.Address[2], msp->currentInFrame.Value[0], msp->currentInFrame.Value[1], msp->currentInFrame.Value[2]);
 	myPrintf(msp->func.Uart,msg);
-	address = binary_converter(msp->currentInFrame.Value,3);
+	sprintf(msg, "command:%c   address:%i  value:%i \r\n",msp->currentInFrame.Command ,address, value);
+	myPrintf(msp->func.Uart,msg);
 
-	switch (address)
+	if (address == 0)
 	{
-	case '0':
-		if (msp->currentInFrame.Value == '1')
+		if (value == 1)
 		{
 			datastorageInit(msp->func.dataStorage);
 			datastorageSave(msp->func.dataStorage);
 			datastorageLoad(msp->func.dataStorage);
 			myPrintf(msp->func.Uart,"Factory defaults has been set!\n");
 		}
-	break;
-	case '1':
-		msp->func.dataStorage->memoryArea[msp->currentInFrame.Address]  =
-				msp->currentInFrame.Value;
+	} //if
+
+	if (address>0 && address<255)
+	{
+		msp->func.dataStorage->memoryArea[address] = value;
 		datastorageSave(msp->func.dataStorage);
 		myPrintf(msp->func.Uart,"dataStorage saved!\n");
-	break;
+	} //if
 
-	}//switch
+
 }//void
 
 void xCommand (struct mySerialProtocolth *msp)
@@ -146,19 +192,26 @@ void YCommand (struct mySerialProtocolth *msp)
 {
 	char msg[50]; //Ebbe a tömbbe többet akartunk tölteni mint amennyi fér így mindig kifagytunk !!!
 	int address = 0;
-	sprintf(msg, "command:%c   address:%c  value:%c \r\n",msp->currentInFrame.Command ,msp->currentInFrame.Address, msp->currentInFrame.Value);
+	int value = 0;
+	address = binary_converter(msp->currentInFrame.Address,3);
+	value = binary_converter(msp->currentInFrame.Value,3);
+
+	sprintf(msg, "command:%c   address:%c%c%c  value:%c%c%c \r\n", msp->currentInFrame.Command , msp->currentInFrame.Address[0], msp->currentInFrame.Address[1], msp->currentInFrame.Address[2], msp->currentInFrame.Value[0], msp->currentInFrame.Value[1], msp->currentInFrame.Value[2]);
 	myPrintf(msp->func.Uart,msg);
+	sprintf(msg, "command:%c   address:%i  value:%i \r\n",msp->currentInFrame.Command ,address, value);
+	myPrintf(msp->func.Uart,msg);
+
 	switch (address)
 	{
 	case 1:
-		if (msp->currentInFrame.Value == '1')
+		if (value == 1)
 		{
 			HAL_GPIO_WritePin(D3_GPIO_Port, D3_Pin, GPIO_PIN_SET);
 			myPrintf(msp->func.Uart,"D3_ON\n");
 
 		}
 
-		if (msp->currentInFrame.Value == '0')
+		if (value == 0)
 		{
 			HAL_GPIO_WritePin(D3_GPIO_Port, D3_Pin, GPIO_PIN_RESET);
 			myPrintf(msp->func.Uart,"D3_OFF\n");
@@ -168,13 +221,13 @@ void YCommand (struct mySerialProtocolth *msp)
 
 
 	case 2:
-		if (msp->currentInFrame.Value == '1')
+		if (value == 1)
 		{
 			HAL_GPIO_WritePin(D4_GPIO_Port, D4_Pin, GPIO_PIN_SET);
 			HAL_UART_Transmit(msp->func.Uart, "D4_ON", 6, 1000);
 		}
 
-		if (msp->currentInFrame.Value == '0')
+		if (value == 0)
 		{
 			HAL_GPIO_WritePin(D4_GPIO_Port, D4_Pin, GPIO_PIN_RESET);
 			HAL_UART_Transmit(msp->func.Uart, "D4_OFF", 6, 1000);
@@ -183,13 +236,13 @@ void YCommand (struct mySerialProtocolth *msp)
 	break;
 
 	case 3:
-		if (msp->currentInFrame.Value == '1')
+		if (value == 1)
 		{
 			HAL_GPIO_WritePin(D5_GPIO_Port, D5_Pin, GPIO_PIN_SET);
 			HAL_UART_Transmit(msp->func.Uart, "D5_ON", 6, 1000);
 		}
 
-		if (msp->currentInFrame.Value == '0')
+		if (value == 0)
 		{
 			HAL_GPIO_WritePin(D5_GPIO_Port, D5_Pin, GPIO_PIN_RESET);
 			HAL_UART_Transmit(msp->func.Uart, "D5_OFF", 6, 1000);
@@ -197,13 +250,13 @@ void YCommand (struct mySerialProtocolth *msp)
 	break;
 
 	case 4:
-		if (msp->currentInFrame.Value == '1')
+		if (value == 1)
 		{
 			HAL_GPIO_WritePin(D6_GPIO_Port, D6_Pin, GPIO_PIN_SET);
 			HAL_UART_Transmit(msp->func.Uart, "D6_ON", 6, 1000);
 		}
 
-		if (msp->currentInFrame.Value == '0')
+		if (value == 0)
 		{
 			HAL_GPIO_WritePin(D6_GPIO_Port, D6_Pin, GPIO_PIN_RESET);
 			HAL_UART_Transmit(msp->func.Uart, "D6_OFF", 6, 1000);
@@ -221,6 +274,12 @@ void parseFrame (struct mySerialProtocolth *msp)
  {
  case 'r':
 	 rCommand(msp);
+ break;
+ case 't':
+	 tCommand(msp);
+ break;
+ case 'T':
+	 TCommand(msp);
  break;
  case 'w':
 	 wCommand(msp);
@@ -262,7 +321,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 				case ST_WF_COMMAND:
 					mySerialProtocols[eidx]->currentInFrame.Command =mySerialProtocols[eidx]->func.oneCharBuffer;
 					setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
-					mySerialProtocols[eidx]->func.protocol_st= ST_WF_ADDRESS;
+
+					if (mySerialProtocols[eidx]->currentInFrame.Command == 't')
+						mySerialProtocols[eidx]->func.protocol_st=  ST_WF_ENDCHAR;
+					else
+						mySerialProtocols[eidx]->func.protocol_st= ST_WF_ADDRESS_1;
 					break;
 
 				case ST_WF_ADDRESS_1:
@@ -270,26 +333,32 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 					setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
 					mySerialProtocols[eidx]->func.protocol_st=  ST_WF_ADDRESS_2;
 					break;
+
 				case ST_WF_ADDRESS_2:
 						mySerialProtocols[eidx]->currentInFrame.Address[1] =mySerialProtocols[eidx]->func.oneCharBuffer;
 						setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
 						mySerialProtocols[eidx]->func.protocol_st=  ST_WF_ADDRESS_3;
 						break;
+
 				case ST_WF_ADDRESS_3:
 						mySerialProtocols[eidx]->currentInFrame.Address[2] =mySerialProtocols[eidx]->func.oneCharBuffer;
 						setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
-						mySerialProtocols[eidx]->func.protocol_st=  ST_WF_VALUE_1;
+
+						if (mySerialProtocols[eidx]->currentInFrame.Command == 'r')
+							mySerialProtocols[eidx]->func.protocol_st=  ST_WF_ENDCHAR;
+						else
+							mySerialProtocols[eidx]->func.protocol_st=  ST_WF_VALUE_1;
 						break;
 
 				case ST_WF_VALUE_1:
 					mySerialProtocols[eidx]->currentInFrame.Value[0] =mySerialProtocols[eidx]->func.oneCharBuffer;
 					setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
-					mySerialProtocols[eidx]->func.protocol_st=  ST_WF_ENDCHAR;
+					mySerialProtocols[eidx]->func.protocol_st=  ST_WF_VALUE_2;
 					break;
 				case ST_WF_VALUE_2:
-					mySerialProtocols[eidx]->currentInFrame.Value[2] =mySerialProtocols[eidx]->func.oneCharBuffer;
+					mySerialProtocols[eidx]->currentInFrame.Value[1] =mySerialProtocols[eidx]->func.oneCharBuffer;
 					setTimer(&mySerialProtocols[eidx]->func.serialTimeOutTimer);
-					mySerialProtocols[eidx]->func.protocol_st=  ST_WF_ENDCHAR;
+					mySerialProtocols[eidx]->func.protocol_st=  ST_WF_VALUE_3;
 					break;
 				case ST_WF_VALUE_3:
 					mySerialProtocols[eidx]->currentInFrame.Value[2] =mySerialProtocols[eidx]->func.oneCharBuffer;

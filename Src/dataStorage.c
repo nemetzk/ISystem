@@ -16,7 +16,7 @@
 datastorageInit(struct dataStorageth *myDatastorage)
 {
 
- 	  //FlashErase(&(myDatastorage->Flashmemory));
+ 	  FlashErase(&(myDatastorage->Flashmemory));
 	  myDatastorage->Flashmemory.Tx_Data[0] = 0;
 	  myDatastorage->Flashmemory.Tx_Data[1] = 1;
 	  myDatastorage->Flashmemory.Tx_Data[2] = 2;

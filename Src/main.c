@@ -83,6 +83,10 @@ void main_init(UART_HandleTypeDef *myuart)
 
 	   //MSP1.sbusUart = &huart1;
 	   MSP2.func.Uart = myuart;
+	   MSP2.func.dataStorage = &settingsData;
+	   MSP2.func.hrtc = &hrtc;
+	   initMySerialProtocol(&MSP2);
+
 }
 /* USER CODE END 0 */
 
@@ -121,7 +125,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   main_init(&huart2);
   TimerekSetup(&htim6);
-  initMySerialProtocol(&MSP2);
+
   //main_cycle_setup();
   /* USER CODE END 2 */
 
