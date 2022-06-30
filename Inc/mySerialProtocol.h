@@ -40,6 +40,7 @@ typedef struct mspFuncth
 	struct RTC_HandleTypeDef *hrtc;
 	RTC_TimeTypeDef sTime;
 	RTC_DateTypeDef sDate;
+	RTC_AlarmTypeDef sAlarm;
 	myTimerType serialTimeOutTimer;
 }mspFunct;
 

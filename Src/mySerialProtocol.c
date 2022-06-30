@@ -264,7 +264,26 @@ void YCommand (struct mySerialProtocolth *msp)
 			HAL_UART_Transmit(msp->func.Uart, "D6_OFF", 6, 1000);
 		}
 	break;
+	case 5:
 
+		msp->func.sAlarm.AlarmTime.Hours = 17; // hours
+		msp->func.sAlarm.AlarmTime.Minutes = 35; // min
+		msp->func.sAlarm.AlarmTime.Seconds = 0; //seconds
+		msp->func.sAlarm.AlarmTime.SubSeconds = 0;
+		msp->func.sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+		msp->func.sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
+		msp->func.sAlarm.AlarmMask = RTC_ALARMMASK_ALL;
+		  //sAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
+		  //sAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_WEEKDAY;
+		  //sAlarm.AlarmDateWeekDay = 0x9; // DATE
+		msp->func.sAlarm.Alarm = RTC_ALARM_A;
+
+		  if (HAL_RTC_SetAlarm_IT(msp->func.hrtc, &msp->func.sAlarm, RTC_FORMAT_BIN) != HAL_OK)
+		  {
+
+		  }
+
+	break;
 
 	}
 }
