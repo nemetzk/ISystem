@@ -185,8 +185,6 @@ uint32_t Flash_Write_Data (struct flashMemoryth *Flashm)
 	Flashm->Private.NbOfPages = EndPage -StartPage + 1;
 	Flashm->Private.BankNumber = GetBank(Flashm->address);
 
-
-
 	EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
 	EraseInitStruct.Banks       = Flashm->Private.BankNumber;
 	EraseInitStruct.Page        = StartPage;
@@ -194,10 +192,7 @@ uint32_t Flash_Write_Data (struct flashMemoryth *Flashm)
 
 	   if (HAL_FLASHEx_Erase(&EraseInitStruct, &Flashm->Private.PAGEError) != HAL_OK)
 	   {
-	     while (1)
-	     {
-
-	     }
+		   return HAL_FLASH_GetError ();
 	   }
 /*
  * ************** Adatok írása a flash-be ***************
