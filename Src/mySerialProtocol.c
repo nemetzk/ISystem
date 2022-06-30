@@ -176,6 +176,7 @@ void wCommand (struct mySerialProtocolth *msp)
 		msp->func.dataStorage->Flashmemory.Tx_Data[address] = value;
 		res=datastorageSave(msp->func.dataStorage);
 		sprintf(msg,"dataStorage result: %i!\n",res);
+		datastorageLoad(msp->func.dataStorage);
 		myPrintf(msp->func.Uart,msg);
 	} //if
 
