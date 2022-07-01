@@ -32,6 +32,7 @@ datastorageInit(struct dataStorageth *myDatastorage)
 
 datastorageSave( struct dataStorageth *myDatastorage)
 {
+	//FlashErase      (&(myDatastorage->Flashmemory));
 	Flash_Write_Data(&(myDatastorage->Flashmemory));
 }
 

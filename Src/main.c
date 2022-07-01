@@ -71,9 +71,11 @@ void main_init(UART_HandleTypeDef *myuart)
 	  settingsData.Flashmemory.address = 0x0803f800;
 
 
-	   //datastorageInit(&settingsData); //ezt inkább próbánál az első adatbetöltésnél kell használni egyszer
-	   //datastorageSave(&settingsData);
-	   datastorageLoad(&settingsData);
+	     datastorageInit(&settingsData); //ezt inkább próbánál az első adatbetöltésnél kell használni egyszer
+	     datastorageSave(&settingsData);
+	     datastorageLoad(&settingsData);
+	     datastorageInit(&settingsData); //ezt inkább próbánál az első adatbetöltésnél kell használni egyszer
+	     datastorageSave(&settingsData);
 
 	   /* Segítség az STM32F4 vezérlő flash memória modul kidolgozásához
 	    * https://controllerstech.com/flash-programming-in-stm32/
