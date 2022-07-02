@@ -50,7 +50,7 @@ typedef struct memoryAreath
 typedef struct dataStorageth
 {
 	struct flashMemoryth Flashmemory;
-	int16_t memoryArea[NUM_OF_DATAS_IN_STORAGE_ARRAY+1];
+	uint32_t memoryArea[NUM_OF_DATAS_IN_STORAGE_ARRAY+1];
 	//struct memoryAreath memoryArea[NUM_OF_DATAS_IN_STORAGE_ARRAY];
 };
 

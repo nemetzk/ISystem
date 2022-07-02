@@ -173,11 +173,11 @@ typedef struct flashPrivateth
 
 typedef struct flashMemoryth
 {
-	int16_t *data;
+	uint16_t *data;
 	uint32_t address;
-	int16_t Tx_Data[NUM_OF_DATAS_IN_STORAGE_ARRAY];
-	int16_t Rx_Data[NUM_OF_DATAS_IN_STORAGE_ARRAY];
-	int16_t *RxBuf;
+	uint16_t Tx_Data[NUM_OF_DATAS_IN_STORAGE_ARRAY];
+	uint16_t Rx_Data[NUM_OF_DATAS_IN_STORAGE_ARRAY];
+	uint16_t *RxBuf;
 	struct flashPrivateth Private;
 }flashMemoryt;
 
