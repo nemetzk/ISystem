@@ -267,13 +267,21 @@ void YCommand (struct mySerialProtocolth *msp)
 	break;
 	case 5:
 
-		msp->func.sAlarm.AlarmTime.Hours = 17; // hours
-		msp->func.sAlarm.AlarmTime.Minutes = 35; // min
+		msp->func.sAlarm.AlarmTime.Hours = msp->func.dataStorage->Flashmemory.Rx_Data[ALARM_TIME_HOURS_1]; // hours
+		msp->func.sAlarm.AlarmTime.Minutes = msp->func.dataStorage->Flashmemory.Rx_Data[ALARM_TIME_MINUTES_1]; // min
 		msp->func.sAlarm.AlarmTime.Seconds = 0; //seconds
 		msp->func.sAlarm.AlarmTime.SubSeconds = 0;
 		msp->func.sAlarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
 		msp->func.sAlarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
-		msp->func.sAlarm.AlarmMask = RTC_ALARMMASK_ALL;
+
+
+		msp->func.sAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_WEEKDAY;
+		msp->func.sAlarm.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY;
+		msp->func.sAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_NONE;
+		msp->func.sAlarm.AlarmTime.TimeFormat = RTC_HOURFORMAT_24;
+
+
+
 		  //sAlarm.AlarmSubSecondMask = RTC_ALARMSUBSECONDMASK_ALL;
 		  //sAlarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_WEEKDAY;
 		  //sAlarm.AlarmDateWeekDay = 0x9; // DATE
@@ -281,7 +289,7 @@ void YCommand (struct mySerialProtocolth *msp)
 
 		  if (HAL_RTC_SetAlarm_IT(msp->func.hrtc, &msp->func.sAlarm, RTC_FORMAT_BIN) != HAL_OK)
 		  {
-
+			  	 Error_Handler();
 		  }
 
 	break;
