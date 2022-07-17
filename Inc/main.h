@@ -59,28 +59,12 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define MCO_Pin GPIO_PIN_0
 #define MCO_GPIO_Port GPIOA
-#define Y10_Pin GPIO_PIN_1
-#define Y10_GPIO_Port GPIOA
 #define VCP_TX_Pin GPIO_PIN_2
 #define VCP_TX_GPIO_Port GPIOA
-#define Y11_Pin GPIO_PIN_3
-#define Y11_GPIO_Port GPIOA
-#define Y12_Pin GPIO_PIN_4
-#define Y12_GPIO_Port GPIOA
-#define Y13_Pin GPIO_PIN_5
-#define Y13_GPIO_Port GPIOA
-#define Y14_Pin GPIO_PIN_6
-#define Y14_GPIO_Port GPIOA
-#define Y15_Pin GPIO_PIN_7
-#define Y15_GPIO_Port GPIOA
-#define X01_Pin GPIO_PIN_0
-#define X01_GPIO_Port GPIOB
-#define Y00_Pin GPIO_PIN_8
-#define Y00_GPIO_Port GPIOA
-#define Y01_Pin GPIO_PIN_11
-#define Y01_GPIO_Port GPIOA
-#define X00_Pin GPIO_PIN_12
-#define X00_GPIO_Port GPIOA
+#define D3_Pin GPIO_PIN_0
+#define D3_GPIO_Port GPIOB
+#define D6_Pin GPIO_PIN_1
+#define D6_GPIO_Port GPIOB
 #define SWDIO_Pin GPIO_PIN_13
 #define SWDIO_GPIO_Port GPIOA
 #define SWCLK_Pin GPIO_PIN_14
@@ -89,14 +73,10 @@ void Error_Handler(void);
 #define VCP_RX_GPIO_Port GPIOA
 #define LD3_Pin GPIO_PIN_3
 #define LD3_GPIO_Port GPIOB
-#define Y03_Pin GPIO_PIN_4
-#define Y03_GPIO_Port GPIOB
-#define Y02_Pin GPIO_PIN_5
-#define Y02_GPIO_Port GPIOB
-#define X03_Pin GPIO_PIN_6
-#define X03_GPIO_Port GPIOB
-#define X02_Pin GPIO_PIN_7
-#define X02_GPIO_Port GPIOB
+#define D5_Pin GPIO_PIN_6
+#define D5_GPIO_Port GPIOB
+#define D4_Pin GPIO_PIN_7
+#define D4_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
