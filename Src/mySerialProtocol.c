@@ -4,6 +4,24 @@
  *  Created on: May 6, 2022
  *      Author: nemet
  */
+/* *******************************************************************
+ * ex 1) switch on an output &Y001001!
+ *                 start char|cmd|addr1|addr2|addr3|value1|value2|value3|end|
+ * print current time:
+ * 						 &t!   current time: 0:36:6
+ * set time->hours to 13:
+ * 						 &T001013!
+ * set time->minutes to 30:
+ * 			  			 &T002030!
+ * write to memory memory_array[001] = 11
+ * 						 &w001011!
+ * read from memory array [01]
+ *  					 &r001!
+ *
+ *
+ */
+
+
 #include "main.h"
 #include "mySerialProtocol.h"
 #include "parameters.h"
@@ -266,6 +284,13 @@ void YCommand (struct mySerialProtocolth *msp)
 		}
 	break;
 	case 5:
+
+
+
+		sprintf(msg, "Alarm accepted for: min:%i   sec:%i \r\n", msp->func.dataStorage->Flashmemory.Rx_Data[ALARM_TIME_HOURS_1] ,msp->func.dataStorage->Flashmemory.Rx_Data[ALARM_TIME_MINUTES_1]);
+		myPrintf(msp->func.Uart,msg);
+
+		//HAL_UART_Transmit(msp->func.Uart, "D4_ON", 6, 1000);
 
 		msp->func.sAlarm.AlarmTime.Hours = msp->func.dataStorage->Flashmemory.Rx_Data[ALARM_TIME_HOURS_1]; // hours
 		msp->func.sAlarm.AlarmTime.Minutes = msp->func.dataStorage->Flashmemory.Rx_Data[ALARM_TIME_MINUTES_1]; // min
